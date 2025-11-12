@@ -93,4 +93,25 @@ new_data= pd.DataFrame ({'Income': [1,2,3], 'Production': [1,2,3], 'Savings': [1
 new_data= sm.add_constant (new_data)
 pred_02= mlr_model.predict (new_data)
 print("Multiple Linear Regression Predictions:" , pred_02)
+
+# %% -- Multiple Regresseion with Dummy Variables
+shpm_ts["week_day"] = shpm_ts["del_date"].dt.day_name()
+
+week_dummies = pd.get_dummies(shpm_ts["week_day"], drop_first=True).astype(int)
+shpm_ts = pd.concat([shpm_ts[["wdays", "GWkg"]], week_dummies], axis=1)
+
+x= shpm_ts.drop(columns=["GWkg"])
+x=sm.add_constant(x)
+y= shpm_ts["GWkg"]
+
+lm_dummy = sm.OLS(y,x).fit()
+print(lm_dummy.summary())
+
+plt.figure (figsize=(10, 5))
+sns.lineplot(x=shpm_ts['wdays'], y=shpm_ts['GWkg'], marker='o', label='Actual Values')
+plt.plot(shpm_ts['wdays'], lm_dummy.fittedvalues, color='red', label='Fitted Values')
+plt.legend()
+plt.show()
+
+
 # %%

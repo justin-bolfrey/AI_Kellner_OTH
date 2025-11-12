@@ -57,4 +57,40 @@ shpm_ts['wdays'] = np.arange(1, len(shpm_ts)+1)
 
 y = shpm_ts['GWkg']
 X= shpm_ts [['wdays']]
+
+model = LinearRegression()
+model.fit (X, y) 
+
+print(" Linear Regression Model:")
+print(f"Intercept: {model.intercept_}, Coefficient: {model.coef_[0]}")
+
+
+# ---- Predict Future Values ----
+new_days = pd.DataFrame ({'wdays': [253,254,255]})
+pred_01= model.predict (new_days)
+print("Predictions:" , pred_01)
+
+plt.figure (figsize=(10, 5))
+sns.lineplot(data=shpm_ts, x='del_date', y='GWkg', marker='o', label= 'Actual Values')
+plt.plot(shpm_ts['del_date'], model.predict(X), color='red', label= 'Fitted Values')
+plt.legend()
+plt.show()
+
+# %% -- Multiple Linear Regression
+
+us_change = pd.read_csv("oth_data/us_change.csv", sep=";", decimal =",")
+
+x = us_change [["Income","Production","Savings","Unemployment"]]
+y = us_change ["Consumption"]
+
+x= sm.add_constant (x)
+mlr_model= sm.OLS(y,x).fit()
+print(mlr_model.summary())
+
+
+new_data= pd.DataFrame ({'Income': [1,2,3], 'Production': [1,2,3], 'Savings': [1,2,3], 'Unemployment': [1,2,3]})
+
+new_data= sm.add_constant (new_data)
+pred_02= mlr_model.predict (new_data)
+print("Multiple Linear Regression Predictions:" , pred_02)
 # %%

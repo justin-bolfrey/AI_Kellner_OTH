@@ -114,4 +114,16 @@ plt.legend()
 plt.show()
 
 
+# %% -- Advanced Techniques ----
+temp = (
+    shpm
+    .groupby("del_date", as_index=False)
+    .agg(sum_tons = ("GWkg", lambda x: np.nansum(x)/1000))
+    .sort_values("del_date")
+)
+
+temp ["week_day"] = temp ["del_date"].dt.day_name()
+
+temp
+
 # %%
